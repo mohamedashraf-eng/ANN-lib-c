@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.21)
+
+## Set Project Name.
+project(ANN_C)
+
+## Set Inluded Source Files.
+set(SRC_FILES 
+    ../src/Global.c
+    ../src/MATRIX.c
+    ../src/main.c)
+
+## Check the source file.
+#message(STATUS "Included Source Files: ${SRC_FILES}")
+
+## Check the source dir.
+message("Source Directory: ${CMAKE_SOURCE_DIR}")
+
+## Add Sub Directories.
+#add_subdirectory(${CMAKE_SOURCE_DIR}/inc);
+
+## Set Exe File.
+add_executable(output ${SRC_FILES})
+
+
+target_include_directories(output PUBLIC ../inc/)
