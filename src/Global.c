@@ -40,6 +40,8 @@ Type_t *create_vector(const uint16_t vector_len, bool init)
     return new_vector; 
 }//end create_vector.
 
+//====================================> [MAIN FUNCTIONS]
+
 // Function to create matrix in heap.
 /*
 - Heap visual view:
@@ -125,36 +127,6 @@ void vector_init(Type_t *vector)
     return;
 }//end vector_init.
 
-
-// Function to print vector. (float)
-void print_vector(Type_t *vector)
-{
-    // Error Handler.
-    // Check if vector struct is valid.
-    if(vector == NULL)
-    {printf("\n GLOBAL.H|ERROR. Vector: NULL.\n"); exit(-1);}
-    // assert(vector != NULL); // For strictly exit.
-
-    // Check if vector data is valid.
-    if(vector->Vector_t.Vector == NULL)
-    {printf("\n GLOBAL.H|ERROR. Vector[LEN]: NULL.\n"); exit(-1);}
-    // assert(vector->Vector_t.Vector != NULL); // For Strictly exit.
-
-    // Check if vector length isn't valid.
-    if(vector->Vector_t.len <= 0)
-    {printf("\n GLOBAL.H|ERROR. Vector_LEN invalid.\n"); exit(-1);}
-    // assert(vector->Vector_t.len > 0) // For strictly exit.
-
-    // Print the vector.
-    for(uint16_t i = 0; i < vector->Vector_t.len; i++)
-    {
-        printf("\n%.3f", vector->Vector_t.Vector[i]);
-    }
-    
-    printf("\n");
-    return;
-}//end print_vector.
-
 // Function to init a matrix. (float)
 void matrix_init(Type_t *matrix)
 {
@@ -188,6 +160,37 @@ void matrix_init(Type_t *matrix)
 
     return;
 }//end matrix_init.
+
+//====================================> [SUB FUNCTIONS]
+
+// Function to print vector. (float)
+void print_vector(Type_t *vector)
+{
+    // Error Handler.
+    // Check if vector struct is valid.
+    if(vector == NULL)
+    {printf("\n GLOBAL.H|ERROR. Vector: NULL.\n"); exit(-1);}
+    // assert(vector != NULL); // For strictly exit.
+
+    // Check if vector data is valid.
+    if(vector->Vector_t.Vector == NULL)
+    {printf("\n GLOBAL.H|ERROR. Vector[LEN]: NULL.\n"); exit(-1);}
+    // assert(vector->Vector_t.Vector != NULL); // For Strictly exit.
+
+    // Check if vector length isn't valid.
+    if(vector->Vector_t.len <= 0)
+    {printf("\n GLOBAL.H|ERROR. Vector_LEN invalid.\n"); exit(-1);}
+    // assert(vector->Vector_t.len > 0) // For strictly exit.
+
+    // Print the vector.
+    for(uint16_t i = 0; i < vector->Vector_t.len; i++)
+    {
+        printf("\n%.3f", vector->Vector_t.Vector[i]);
+    }
+    
+    printf("\n");
+    return;
+}//end print_vector.
 
 // Function to print matrix. (float)
 void print_matrix(Type_t *matrix)
@@ -224,7 +227,6 @@ void print_matrix(Type_t *matrix)
     printf("\n");
     return;
 }//end print_matrix.
-
 
 // Function to free heap vector.
 void free_vector(Type_t *vector)

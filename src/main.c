@@ -7,34 +7,25 @@
 
 //=============================> .MAIN
 
+Network_Topology_t MyNetworkTopology = {.input_layer_dense  = 3, 
+                                        .hidden_layer_dense = 4,
+                                        .hidden_layer_num   = 2,
+                                        .output_layer_dense = 2,
+                                        .activation_function = &ReLU,
+                                        .loss_function       = &SquareError,
+                                        .optimizer_function  = &GradientDescent};
+
+Network_Config_t MyNetworkConfig = {.learning_rate = 0.1332,
+                                    .dropout = false};
+
+
 int main(void)
 {
     // Change terimnal color: GREEN.
     system("COLOR 0A");
     
     
-    const uint16_t len = 3;
-    Type_t *vector  = create_vector(len, true);
-
-    const uint16_t row = 5, col = 3;
-    Type_t *matrix  = create_matrix(row, col, true); 
-
-    // print the vector & the matrix.
-    print_vector(vector);
-    print_matrix(matrix);
-
-    // perform dot product.
-    float *dp = VxM_DotProduct(vector, matrix);
-
-    Type_t *result = create_vector(row, false);
-
-    result->Vector_t.Vector = dp;
-    print_vector(result);
-
-    free_vector(result);
-    free_vector(vector); 
-    free_matrix(matrix);
-    free(dp);
+    DNN_Network *myNetwork = Create_Network(&MyNetworkTopology, &MyNetworkConfig);
 
     printf("\n");
     return 0;

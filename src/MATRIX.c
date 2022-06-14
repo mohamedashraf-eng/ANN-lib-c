@@ -5,7 +5,7 @@
 */
 //=============================> .START
 //=============================> .INC
-#include "../inc/Global.h"
+#include "Global.h"
 //=============================> .FUNC
 
 // Function to perform the dot product.
