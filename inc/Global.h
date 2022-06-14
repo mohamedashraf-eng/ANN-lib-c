@@ -20,6 +20,7 @@
 
 //====> Made Headers.
 #include "MATRIX.h"
+#include "ANN.h"
 //=============================> .STRUCTS
 
 // Private struct for private variables.
@@ -32,7 +33,6 @@ typedef struct _Private_t
     
     // const uint16_t x, y, z; // For general purpose using.
 }Privates_t;
-
 
 //=============================> .DEFINES
 
