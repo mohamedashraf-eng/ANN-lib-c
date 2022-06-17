@@ -27,7 +27,7 @@ int main(void)
     
     DNN_Network *myNetwork = Create_Network(&MyNetworkTopology, &MyNetworkConfig);
 
-    //print_network(myNetwork);
+    print_network(myNetwork);
 
     printf("\n");
     return 0;

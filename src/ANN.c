@@ -7,6 +7,9 @@
 //=============================> .INC
 #include "../inc/Global.h"
 
+#define CURRENT_H "ANN.H"
+#define CURRENT_C "ANN.C"
+//=============================> .FUNC
 /* 
     - Algorithm overview:
         1- Setting the n.network topology parameters.
@@ -48,7 +51,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     DNN_Network *new_dnnNetwork = (DNN_Network *) malloc(sizeof(DNN_Network));
    
     if(new_dnnNetwork == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     // Set the network settings:
     // Set the network configs. (general by default. User can change it)
@@ -65,11 +68,14 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     new_dnnNetwork->network_layers = (Layer_t *) malloc(sizeof(Layer_t));
     
     if(new_dnnNetwork->network_layers == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     // Input Layer:
     // Create new vector in heap & Set the input layer dense. (Initalize: True)
     const uint16_t ilDense = new_dnnNetwork->network_topology->input_layer_dense; // Temporary variable for readability.
+    // Create input layer struct memory in heap.
+    new_dnnNetwork->network_layers->Input_layer = (Input_Layer *) malloc(sizeof(Input_Layer));
+    // Create input layer vector data in heap.
     new_dnnNetwork->network_layers->Input_layer->input_layer = create_vector(ilDense, true);
 
     // Hidden Layer:
@@ -80,7 +86,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     new_dnnNetwork->network_layers->Hidden_layer = (Hidden_Layer *) malloc(sizeof(Hidden_Layer) * hlNum);
     
     if(new_dnnNetwork->network_layers->Hidden_layer == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     //Hidden_Layer hidden_layers[hlNum];
     //new_dnnNetwork->network_layers->Hidden_layer = hidden_layers;
@@ -101,7 +107,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     new_dnnNetwork->network_layers->Output_layer = (Output_Layer *) malloc(sizeof(Output_Layer));
     
     if(new_dnnNetwork->network_layers->Output_layer == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     // Create heap memory and assign data to the output layer vector.
     new_dnnNetwork->network_layers->Output_layer->output_layer = create_vector(olDense ,true);
@@ -125,7 +131,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     new_dnnNetwork->network_layers->Layer_weights = (Layer_Weights *) malloc(sizeof(Layer_Weights) * (number_of_matrices));
    
     if(new_dnnNetwork->network_layers->Layer_weights == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     // Set the Weights(INPUT<=>HIDDEN[0]): (Layer_weights[0]) <> (Transient states excpetion)
     uint16_t row = new_dnnNetwork->network_topology->hidden_layer_dense;
@@ -154,7 +160,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     new_dnnNetwork->network_layers->Layers_biases = (Layers_Biases *) malloc(sizeof(Layers_Biases));
     
     if(new_dnnNetwork->network_layers->Layers_biases == NULL)
-    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+        error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
     // Create heap memory for the biases vector & assign the vector of biases.
     new_dnnNetwork->network_layers->Layers_biases->layers_biases = create_vector(biases_vector_length, true);
@@ -231,7 +237,7 @@ void network_topology_validity(Network_Topology_t *network_topology)
 {
     //Check if the passed newtork_topology is valid.
     if(network_topology == NULL)
-    {printf("\n ANN.c|ERROR. network_topology: NULL\n"); exit(-1);}
+        error_exit(CURRENT_C, "NETWORK_TOPOLOGY:NULL");
     // assert(network_topology != NULL); // For strictly exit.
 
     // First check the layers.
@@ -240,7 +246,7 @@ void network_topology_validity(Network_Topology_t *network_topology)
        (network_topology->output_layer_dense <= 0) ||
        (network_topology->hidden_layer_num   <= 1)
       )
-    {printf("\n ANN.c|ERROR. network_topology_validity: false\n"); exit(-1);}
+        error_exit(CURRENT_C, "NETWORK_TOPOLOGY_PARAMS:INVALID");
 
     // assert(network_topology->input_layer_dense > 0);
     // assert(network_topology->hidden_layer_dense > 0);
@@ -249,35 +255,35 @@ void network_topology_validity(Network_Topology_t *network_topology)
 
     // Check the restrections.
     if(network_topology->input_layer_dense  > MAX_INPUT_LAYER_DENSE)
-    {printf("\n ANN.c|ERROR. input_layer_dense: invalid\n"); exit(-1);}
+        error_exit(CURRENT_C, "INPUT_LAYER_DENSE:MAX_LIMIT");
     // assert(network_topology->input_layer_dense < MAX_INPUT_LAYER_DENSE);
 
     if(network_topology->hidden_layer_dense > MAX_HIDDEN_LAYER_DENSE)
-    {printf("\n ANN.c|ERROR. hidden_layer_dense: invalid\n"); exit(-1);}
+        error_exit(CURRENT_C, "HIDDEN_LAYER_DENSE:MAX_LIMIT");
     // assert(network_topology->hidden_layer_dense < MAX_HIDDEN_LAYER_DENSE);
 
     if(network_topology->output_layer_dense > MAX_OUTPUT_LAYER_DENSE)
-    {printf("\n ANN.c|ERROR. output_layer_dense: invalid\n"); exit(-1);}
+        error_exit(CURRENT_C, "OUTPUT_LAYER_DENSE:MAX_LIMIT");
     // assert(network_topology->outputlayer_dense < MAX_OUTPUT_LAYER_DENSE);
 
     if(network_topology->hidden_layer_num   > MAX_HIDDEN_LAYER_NUM)
-    {printf("\n ANN.c|ERROR. hidden_layer_num: invalid\n"); exit(-1);}
+        error_exit(CURRENT_C, "HIDDEN_LAYER_NUM:MAX_LIMIT");
     // assert(network_topology->hidden_layer_num < MAX_HIDDEN_LAYER_NUM);
 
     // Check the functions pointer.
     // Check the activation function pointer.
     if(network_topology->activation_function == NULL)
-    {printf("\n ANN.|ERROR. Activation_Function: NULL\n"); exit(-1);}
+        error_exit(CURRENT_C, "NETWORK_TOPOLOGY_AF:NULL");
     // assert(network_topology->activation_function != NULL);
 
     // Check the loss function pointer.
     if(network_topology->loss_function == NULL)
-    {printf("\n ANN.|ERROR. Loss_Function: NULL\n"); exit(-1);}
+        error_exit(CURRENT_C, "NETWORK_TOPOLOGY_LF:NULL");
     // assert(network_topology->loss_function != NULL);
 
     // Check the optimizer function pointer.
     if(network_topology->optimizer_function == NULL)
-    {printf("\n ANN.|ERROR. Optimizer_Function: NULL\n"); exit(-1);}
+        error_exit(CURRENT_C, "NETWORK_TOPOLOGY_OF:NULL");
     // assert(network_topology->optimizer_function != NULL);
 
     return;
@@ -288,7 +294,7 @@ void network_topology_validity(Network_Topology_t *network_topology)
 void print_network(DNN_Network *myNetwork)
 {
     if(myNetwork == NULL)
-    {printf("\n ANN.C|ERROR. print_network(myNetwork): NULL\n"); return;}
+        error_exit(CURRENT_C, "MY_NETWORK:NULL");
 
     // Printing the input layer.
     printf("\n Input_Layer: \n");

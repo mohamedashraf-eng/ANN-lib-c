@@ -6,6 +6,9 @@
 //=============================> .START
 //=============================> .INC
 #include "Global.h"
+
+#define CURRENT_H "MATRIX.H"
+#define CURRENT_C "MATRIX.C"
 //=============================> .FUNC
 
 // Function to perform the dot product.
@@ -25,48 +28,8 @@
 */
 float *VxM_DotProduct(Type_t *vector, Type_t *matrix)
 {
-    // - Error Handeling:
-    
-    // Check if ethier the Vector or the Matrix is NULL.
-    if( (vector == NULL) || (matrix == NULL) )
-    {printf("\n MATRIX.C|ERROR. VECTOR, MATRIX: NULL\n"); exit(-1);}
-    // assert(vector != NULL); assert(matrix != NULL); // For strictly exit.
-    
-    // Data Checking.
-    // 1- Check the vector elements.
-    // Check the vector data.
-    if((vector->Vector_t.Vector) == NULL)
-    {printf("\n MATRIX.C|ERROR. VECTOR: NULL\n"); exit(-1);}
-    // assert(vector->Vector != NULL); // For strictly exit.
-    
-    // Check the vector length & stricts.
-    if(vector->Vector_t.len <= 0)
-    {printf("\n MATRIX.C|ERROR. VECTOR LEN\n"); exit(-1);}
-    // assert(vector->len > 0) // For strictly exit.
-    
-    // Check the vector length (MAX_VECTOR_LENGTH)
-    if(vector->Vector_t.len > MAX_VECTOR_LEN)
-    {printf("\n MATRIX.C|ERROR. VECTOR LEN > MAX_VECTOR_LEN\n"); exit(-1);}
-    // assert(vector->len <= MAX_VECTOR_LEN); // For strictly exit.
-    
-    // 2- Check the matrix elements.
-    if((matrix->Matrix_t.Matrix) == NULL)
-    {printf("\n MATRIX.C|ERROR. MATRIX: NULL\n"); exit(-1);}
-    // assert(matrix->Matrix != NULL) // For strictly exit.
-    
-    if( (matrix->Matrix_t.row <= 0) || (matrix->Matrix_t.col <= 0) )
-    {printf("\n MATRIX.C|ERROR. MATRIX_COL_ROW\n"); exit(-1);}
-    // assert(matrix->row > 0); assert(matrix->col > 0); // For strictly exit.
-    
-    if( (matrix->Matrix_t.row > MAX_MATRIX_ROW) || (matrix->Matrix_t.col > MAX_MATRIX_COL) )
-    {printf("\n MATRIX.C|ERROR. MATRIX_COL_ROW > MAX_STRICTS\n"); exit(-1);}
-    // assert(matrix->row < MAX_MATRIX_ROW); assert(matrix->col < MAX_MATRIX_COL); // For strictly exit.
-    
-    // Dot product math validity conditions.
-    if(matrix->Matrix_t.col != vector->Vector_t.len)
-    {printf("\n MATRIX.C|ERROR. VECTOR[LEN] != MATRIX[COL]"); exit(-1);}
-    // assert(matrix->col == vector->len); // For strictly exit.
-    
+    // Error handeling function.
+    dotProduct_Validity(vector, matrix);
     
     // Allocating heap memory for the result vector.
     float *vector_result = (float *) malloc(sizeof(float) * matrix->Matrix_t.row);
@@ -101,3 +64,49 @@ float *VxM_DotProduct(Type_t *vector, Type_t *matrix)
     // Return the result vector as union.
     return vector_result;
 }//end Matrix_X_Vector.
+
+//====================================> [SUB FUNCTIONS]
+// Sub function for error handeling.
+void dotProduct_Validity(Type_t *vector, Type_t *matrix)
+{
+    // - Error Handeling:
+    // Check if ethier the Vector or the Matrix is NULL.
+    if( (vector == NULL) || (matrix == NULL) )
+        error_exit(CURRENT_C, "VECTOR_MATRIX:NULL");
+    // assert(vector != NULL); assert(matrix != NULL); // For strictly exit.
+    
+    // Data Checking.
+    // 1- Check the vector elements.
+    // Check the vector data.
+    if((vector->Vector_t.Vector) == NULL)
+        error_exit(CURRENT_C, "VECTOR->VECTOR:NULL");
+    // assert(vector->Vector != NULL); // For strictly exit.
+    
+    // Check the vector length & stricts.
+    if(vector->Vector_t.len <= 0)
+    error_exit(CURRENT_C, "VECTOR_LEN:INVALID");
+    // assert(vector->len > 0) // For strictly exit.
+    
+    // Check the vector length (MAX_VECTOR_LENGTH)
+    if(vector->Vector_t.len > MAX_VECTOR_LEN)
+        error_exit(CURRENT_C, "VECTOR_LEN:MAX_LIMIT");
+    // assert(vector->len <= MAX_VECTOR_LEN); // For strictly exit.
+    
+    // 2- Check the matrix elements.
+    if((matrix->Matrix_t.Matrix) == NULL)
+        error_exit(CURRENT_C, "MATRIX->MATRIX:NULL");
+    // assert(matrix->Matrix != NULL) // For strictly exit.
+    
+    if( (matrix->Matrix_t.row <= 0) || (matrix->Matrix_t.col <= 0) )
+        error_exit(CURRENT_C, "MATRIX_ROW_COL:INVALID");
+    // assert(matrix->row > 0); assert(matrix->col > 0); // For strictly exit.
+    
+    if( (matrix->Matrix_t.row > MAX_MATRIX_ROW) || (matrix->Matrix_t.col > MAX_MATRIX_COL) )
+        error_exit(CURRENT_C, "MATRIX_ROW_COL:MAX_LIMIT");
+    // assert(matrix->row < MAX_MATRIX_ROW); assert(matrix->col < MAX_MATRIX_COL); // For strictly exit.
+    
+    // Dot product math validity conditions.
+    if(matrix->Matrix_t.col != vector->Vector_t.len)
+        error_exit(CURRENT_C, "VECTOR_LEN_MATRIX_COL:INVALID");
+    // assert(matrix->col == vector->len); // For strictly exit.
+}//end dotProduct_Validity.
