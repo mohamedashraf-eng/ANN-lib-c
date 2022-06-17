@@ -46,6 +46,9 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
 
     // Create a new Deep Neural Network - Network struct.
     DNN_Network *new_dnnNetwork = (DNN_Network *) malloc(sizeof(DNN_Network));
+   
+    if(new_dnnNetwork == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
     // Set the network settings:
     // Set the network configs. (general by default. User can change it)
@@ -60,6 +63,9 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     // Set the Nerual Network settings:
     // Create new network layers struct in heap.
     new_dnnNetwork->network_layers = (Layer_t *) malloc(sizeof(Layer_t));
+    
+    if(new_dnnNetwork->network_layers == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
     // Input Layer:
     // Create new vector in heap & Set the input layer dense. (Initalize: True)
@@ -72,21 +78,32 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     // Create the hidden layers. (x num)
     const uint16_t hlNum = new_dnnNetwork->network_layers->hidden_layer_num; // Temporary variable for readability.
     new_dnnNetwork->network_layers->Hidden_layer = (Hidden_Layer *) malloc(sizeof(Hidden_Layer) * hlNum);
+    
+    if(new_dnnNetwork->network_layers->Hidden_layer == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+
+    //Hidden_Layer hidden_layers[hlNum];
+    //new_dnnNetwork->network_layers->Hidden_layer = hidden_layers;
 
     // Create layer dense for each hidden layer.
-    const uint16_t N = new_dnnNetwork->network_layers->hidden_layer_num; // Temporary variable for readability.
     const uint16_t hlDense = new_dnnNetwork->network_topology->hidden_layer_dense; // Temporary variable for readability.
-   
-    for(uint16_t i = 0; i < N; i++)
+
+    for(uint16_t i = 0; i < hlNum; i++)
     {   
         // Creat new hidden layers vector. (Initalize: True)
-        
         new_dnnNetwork->network_layers->Hidden_layer[i].hidden_layer = create_vector(hlDense, true);
     }
 
     // Output Layer:
     // Create the output layer & set its dense. (Initalize: True)
     const uint16_t olDense = new_dnnNetwork->network_topology->output_layer_dense;
+    // Create heap memory for the output struct
+    new_dnnNetwork->network_layers->Output_layer = (Output_Layer *) malloc(sizeof(Output_Layer));
+    
+    if(new_dnnNetwork->network_layers->Output_layer == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+
+    // Create heap memory and assign data to the output layer vector.
     new_dnnNetwork->network_layers->Output_layer->output_layer = create_vector(olDense ,true);
 
 
@@ -100,43 +117,50 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
         [20, 21, 2j]                         => [2]
         [i0, i1, ij]                         => [m]
     */
+   
     // Create layers weights (N_LAYERS - 1)
     const uint16_t number_of_layers = new_dnnNetwork->network_topology->hidden_layer_num + 2; // temporary variable for readability.
     const uint16_t number_of_matrices = number_of_layers - 1;
 
     new_dnnNetwork->network_layers->Layer_weights = (Layer_Weights *) malloc(sizeof(Layer_Weights) * (number_of_matrices));
-    
+   
+    if(new_dnnNetwork->network_layers->Layer_weights == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+
     // Set the Weights(INPUT<=>HIDDEN[0]): (Layer_weights[0]) <> (Transient states excpetion)
     uint16_t row = new_dnnNetwork->network_topology->hidden_layer_dense;
     uint16_t col = new_dnnNetwork->network_topology->input_layer_dense;
+    new_dnnNetwork->network_layers->Layer_weights[0].layer_weights = create_matrix(row, col, true); // (Initalize: True).
 
-    new_dnnNetwork->network_layers->Layer_weights[0].layer_weights = create_matrix(row, col, true); // (Initalize: True)
 
-    // Set the Weights(HIDDEN[0]<=>HIDDEN[N-1]):
-    // Re set the row & col for the current position. (Square matrix)
+    // Set the Weights(HIDDEN[0]<=>HIDDEN[N])
     row = new_dnnNetwork->network_topology->hidden_layer_dense;
     col = new_dnnNetwork->network_topology->hidden_layer_dense;
-    for(uint16_t i = 1; i <  (number_of_matrices-1); i++) 
+
+    for(uint16_t i = 1; i < number_of_matrices-1; i++) 
     {
-        new_dnnNetwork->network_layers->Layer_weights[i].layer_weights = create_matrix(row, col, true); // (Initalize: True)
+        new_dnnNetwork->network_layers->Layer_weights[i].layer_weights = create_matrix(row, col, true); // (Initalize: True).
     }
 
-    // Set the Weights(HIDDEN[N]<=>OUTPUT)
-    // Re set the row & col for the current position. 
+    // Set the Weights(HIDDEN[N]<=>OUTPUT): (Layer_weights[n-1]) <> (Transient states excpetion)
     row = new_dnnNetwork->network_topology->output_layer_dense;
     col = new_dnnNetwork->network_topology->hidden_layer_dense;
-
-    new_dnnNetwork->network_layers->Layer_weights[number_of_matrices-1].layer_weights = create_matrix(row, col, true); // (Initalize: True)
+    new_dnnNetwork->network_layers->Layer_weights[number_of_matrices-1].layer_weights = create_matrix(row, col, true); // (Initalize: True).
     
     // Layers_Biases:
     // Create Layer Biases vector. (Initalize: True)
     const uint16_t biases_vector_length = number_of_layers - 1; // Temporary variable for readability.
-    new_dnnNetwork->network_layers->Layers_biases->layers_biases = create_vector(biases_vector_length, true);
+    // Create Layers_Biases struct in heap.
+    new_dnnNetwork->network_layers->Layers_biases = (Layers_Biases *) malloc(sizeof(Layers_Biases));
+    
+    if(new_dnnNetwork->network_layers->Layers_biases == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
+    // Create heap memory for the biases vector & assign the vector of biases.
+    new_dnnNetwork->network_layers->Layers_biases->layers_biases = create_vector(biases_vector_length, true);
 
     // Return the new created network.
     return new_dnnNetwork;
-
 }//end Create_Network.
 
 //====================================> [DNN FUNCTIONS]
@@ -258,5 +282,41 @@ void network_topology_validity(Network_Topology_t *network_topology)
 
     return;
 }//end network_topology_validity.
+
+
+// Function to print network (for debugging purposes)
+void print_network(DNN_Network *myNetwork)
+{
+    if(myNetwork == NULL)
+    {printf("\n ANN.C|ERROR. print_network(myNetwork): NULL\n"); return;}
+
+    // Printing the input layer.
+    printf("\n Input_Layer: \n");
+    print_vector(myNetwork->network_layers->Input_layer->input_layer);
+
+    // Printing hidden layers.
+    const uint16_t hNum = myNetwork->network_topology->hidden_layer_num;
+
+    for(uint16_t i = 0; i < hNum; i++)
+    {
+        printf("\n Hidden_Layer[%d]: \n", i);
+        print_vector(myNetwork->network_layers->Hidden_layer[i].hidden_layer);
+    }  
+
+    // Printing the output layer.
+    printf("\n Output_Layer: \n");
+    print_vector(myNetwork->network_layers->Output_layer->output_layer);
+
+    // Printing all the weights.
+    const uint16_t NoW = myNetwork->network_topology->hidden_layer_num + 1;
+   
+    for(uint16_t i = 0; i < NoW; i++)
+    {    
+        printf("\n Layer_Weights[%d]: \n", i);
+        print_matrix(myNetwork->network_layers->Layer_weights[i].layer_weights);
+    }
+
+    return;
+}//end print_network.
 
 //=============================> .END

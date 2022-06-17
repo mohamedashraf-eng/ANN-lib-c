@@ -26,11 +26,17 @@ Type_t *create_vector(const uint16_t vector_len, bool init)
     // Create vector in the heap.
     Type_t *new_vector = (Type_t *) malloc(sizeof(Type_t));
 
+    if(new_vector == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
+
     // Modify the new vector parameters.
     // Vector length.
     new_vector->Vector_t.len = vector_len;
     // Vector array.
     new_vector->Vector_t.Vector = (float *) malloc(sizeof(float) * new_vector->Vector_t.len);
+    
+    if(new_vector->Vector_t.Vector == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
     // Initialize the new vector.
     init ? 
@@ -68,6 +74,8 @@ Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
 
     // Create the matrix struct
     Type_t *new_matrix = (Type_t *) malloc(sizeof(Type_t));
+    if(new_matrix == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
     // Set the matrix parameters.
     new_matrix->Matrix_t.row = row;
@@ -78,12 +86,16 @@ Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
 
     // Allocating the 2d array in heap (matrix)
     new_matrix->Matrix_t.Matrix = (float **) malloc(sizeof(float **) * new_matrix->Matrix_t.row);
+    if(new_matrix->Matrix_t.Matrix == NULL)
+    {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
 
     // Start creating the links.
     for(uint16_t i = 0; i < new_matrix->Matrix_t.row; i++)
     {   
         // Allocating N Links (N=col).
         new_matrix->Matrix_t.Matrix[i] = (float *) malloc(sizeof(float) * new_matrix->Matrix_t.col);
+        if(new_matrix->Matrix_t.Matrix[i] == NULL)
+        {printf("\n MALLOC_ERROR: ALLOCATING_FAILED \n"); exit(-1);}
     }
 
     // Initalize the new matrix.
