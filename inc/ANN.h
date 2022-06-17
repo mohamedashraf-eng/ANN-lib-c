@@ -122,6 +122,8 @@ float *ReLU(Type_t *);
 float *SquareError(Type_t *);
 
 float *GradientDescent(Type_t *);
+
+void print_network(DNN_Network *);
 //=============================> .END
 #endif /*_ANN_H*/
 

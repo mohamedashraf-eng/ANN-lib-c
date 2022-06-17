@@ -48,5 +48,6 @@ Type_t *create_matrix(const uint16_t , const uint16_t, bool );
 void free_vector(Type_t *);
 void free_matrix(Type_t *);
 
+//void mallocValidity(void *);
 //=============================> .END
 #endif //_GLOBAL_H
