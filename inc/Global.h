@@ -49,5 +49,7 @@ void free_vector(Type_t *);
 void free_matrix(Type_t *);
 
 //void mallocValidity(void *);
+void error_exit(const char *, const char *);
+
 //=============================> .END
 #endif //_GLOBAL_H

@@ -48,5 +48,6 @@ float *VxM_DotProduct(Type_t *, Type_t *);
 // void matrix_inverse(Type_t *);
 // void vector_inverse(Type_t *);
 
+void dotProduct_Validity(Type_t *, Type_t *);
 //=============================> .END
 #endif //_MATRIX_H
