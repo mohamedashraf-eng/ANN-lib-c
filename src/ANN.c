@@ -174,7 +174,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
 // Function to perform the forward propagation on the network.
 void forward_propagation(DNN_Network *dnn_network)
 {
-
+    
 
     return;
 }//end forward_propagation.

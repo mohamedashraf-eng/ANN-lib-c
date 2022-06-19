@@ -311,14 +311,4 @@ void free_matrix(Type_t *matrix)
 }//end free_matrix.
 
 
-// Function for exit falirue.
-void error_exit(const char *location, const char *reason)
-{
-    const char loc = *location, 
-               res = *reason;
-
-    printf("\n ERROR(%s): %s\n", loc , res);
-    exit(EXIT_FAILURE);
-}
-
 //=============================> .END

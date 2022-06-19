@@ -6,7 +6,6 @@
 
 
 //=============================> .MAIN
-
 Network_Topology_t MyNetworkTopology = {.input_layer_dense  = 5, 
                                         .hidden_layer_dense = 4,
                                         .hidden_layer_num   = 2,
@@ -28,6 +27,7 @@ int main(void)
     DNN_Network *myNetwork = Create_Network(&MyNetworkTopology, &MyNetworkConfig);
 
     print_network(myNetwork);
+
 
     printf("\n");
     return 0;
