@@ -26,18 +26,18 @@
 // Private struct for private variables.
 typedef struct _Private_t
 {
-    // Used for the init range & float factor & randomizing.
+    // Used for the init range & double factor & randomizing.
     const uint16_t range;
-    const float    factor;
-    bool randoming;
+    const double    factor;
+    const bool randoming;
     
     // const uint16_t x, y, z; // For general purpose using.
 }Privates_t;
 
 //=============================> .DEFINES
 // Standard error macro function for error handeling.
-#define error_exit(X, ERROR_TYPE) ({fprintf(stderr, "ERROR ("__FILE__": %s -- LINE: %d)\n", ERROR_TYPE, __LINE__); \
-                                    exit(-1);}) 
+#define error_exit(CURRENT_FILE, ERROR_TYPE) ({fprintf(stderr, "ERROR ("__FILE__": %s -- LINE: %d)\n", ERROR_TYPE, __LINE__); \
+                                               exit(-1);}) 
 //=============================> .FUNC
 
 void vector_init(Type_t *);

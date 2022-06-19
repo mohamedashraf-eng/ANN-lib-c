@@ -64,10 +64,12 @@ typedef struct _Layer_t
 typedef struct _Netowrk_Config_t
 {
     // Learning rate.
-    float learning_rate;
+    const double learning_rate;
 
     // Active/Inactive dropout.
-    bool dropout; 
+    const bool dropout; 
+
+    const uint16_t epochs;
 }Network_Config_t;
 
 // Network topology parameters.
@@ -75,26 +77,27 @@ typedef struct _Network_Topology_t
 {
     //===> NN Paramaeters:
     // The input layer number of neurons.
-    uint16_t input_layer_dense;
+    const uint16_t input_layer_dense;
 
     // The output layer number of neurons.
-    uint16_t output_layer_dense;
+    const uint16_t output_layer_dense;
 
     // Number of hidden layers.
-    uint16_t hidden_layer_num;
+    const uint16_t hidden_layer_num;
 
     // The hidden layers number of neurons.
-    uint16_t hidden_layer_dense;   
+    const uint16_t hidden_layer_dense;   
 
     //===> System Parameters:
     // The Activation Function.
-    float * (*activation_function) (Type_t *);
+    double * (*activation_function) (Type_t *); // Activation function for the basic layers.
+    double * (*output_activation_function) (Type_t *); // Activation function for the output layer.
 
     // The Loss Function.
-    float * (*loss_function) (Type_t *);
+    double * (*loss_function) (Type_t *);
 
     // The Optimizer Function.
-    float * (*optimizer_function) (Type_t *);
+    double * (*optimizer_function) (Type_t *);
 
 }Network_Topology_t;
 
@@ -103,7 +106,6 @@ typedef struct _DNN_Network
     Network_Config_t   *network_config;
     Network_Topology_t *network_topology;
     Layer_t            *network_layers;
-    
 }DNN_Network;
 //=============================> .FUNC
 
@@ -114,14 +116,14 @@ void forward_propagation(DNN_Network *);
 void back_propgation(DNN_Network *);
 
 //void Linear(Type_t *);
-float *ReLU(Type_t *);
+double *ELU(Type_t *);
 //void Sigmoid(Type_t *);
 //void Tanh(Type_t *);
-//void SoftMax(Type_t *);
+double *SoftMax(Type_t *);
 
-float *SquareError(Type_t *);
+double *SquareError(Type_t *);
 
-float *GradientDescent(Type_t *);
+double *GradientDescent(Type_t *);
 
 void print_network(DNN_Network *);
 //=============================> .END

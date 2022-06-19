@@ -25,7 +25,7 @@ typedef union _Type_t
     {
         uint8_t len;
         
-        float *Vector;
+        double *Vector;
     }Vector_t;
     
     // Struct to save the matrix elements.
@@ -34,7 +34,7 @@ typedef union _Type_t
         uint8_t row; 
         uint8_t col;
         
-        float **Matrix;
+        double **Matrix;
     }Matrix_t;
     
 }Type_t; // End Union. (Type_t)
@@ -44,7 +44,7 @@ typedef union _Type_t
 //=============================> .FUNC
 
 // Function to perform the dot product.
-float *VxM_DotProduct(Type_t *, Type_t *);
+double *VxM_DotProduct(Type_t *, Type_t *);
 // void matrix_inverse(Type_t *);
 // void vector_inverse(Type_t *);
 
