@@ -35,7 +35,9 @@ typedef struct _Private_t
 }Privates_t;
 
 //=============================> .DEFINES
-
+// Standard error macro function for error handeling.
+#define error_exit(X, ERROR_TYPE) ({fprintf(stderr, "ERROR ("__FILE__": %s -- LINE: %d)\n", ERROR_TYPE, __LINE__); \
+                                    exit(-1);}) 
 //=============================> .FUNC
 
 void vector_init(Type_t *);
@@ -49,7 +51,6 @@ void free_vector(Type_t *);
 void free_matrix(Type_t *);
 
 //void mallocValidity(void *);
-void error_exit(const char *, const char *);
 
 //=============================> .END
 #endif //_GLOBAL_H
