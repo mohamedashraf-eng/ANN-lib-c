@@ -12,7 +12,7 @@
 //=============================> .FUNC
 
 // Function to perform the dot product.
-//float *Matrix_X_Vector(Type_t *, Type_t *);
+//double *Matrix_X_Vector(Type_t *, Type_t *);
 
 //=============================> .IMP
 
@@ -26,13 +26,13 @@
 - Data Block:
     (Hidden_Layer[LAYER]->Vector * Weights[LAYER]->Matrix) = HIDDEN_LAYER[LAYER->NEXT]->Vector.
 */
-float *VxM_DotProduct(Type_t *vector, Type_t *matrix)
+double *VxM_DotProduct(Type_t *vector, Type_t *matrix)
 {
     // Error handeling function.
     dotProduct_Validity(vector, matrix);
     
     // Allocating heap memory for the result vector.
-    float *vector_result = (float *) malloc(sizeof(float) * matrix->Matrix_t.row);
+    double *vector_result = (double *) malloc(sizeof(double) * matrix->Matrix_t.row);
     //static vector_result[vector->len];
     
     /*
@@ -42,11 +42,11 @@ float *VxM_DotProduct(Type_t *vector, Type_t *matrix)
         // Set the new vector parameters.
         vector_result->len = vector->len;
         // Allocacte memory for the Vector data.
-        vector_result->Vector = (float *) malloc(sizeof(float) * vector_result->len);
+        vector_result->Vector = (double *) malloc(sizeof(double) * vector_result->len);
         
     */
     
-    float sum = 0.0;
+    double sum = 0.0;
     
     for(uint16_t i = 0; i < matrix->Matrix_t.row; i++)
     {

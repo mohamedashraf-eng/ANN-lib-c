@@ -11,7 +11,7 @@
 #define CURRENT_H "Global.h"
 //=============================> .STRUCT
 
-Privates_t private = {.range = 100, .factor = 0.1332, .randoming = true};
+Privates_t private = {.range = 10.0f, .factor = 0.1332f, .randoming = true};
 
 //=============================> .FUNC
 
@@ -36,7 +36,7 @@ Type_t *create_vector(const uint16_t vector_len, bool init)
     // Vector length.
     new_vector->Vector_t.len = vector_len;
     // Vector array.
-    new_vector->Vector_t.Vector = (float *) malloc(sizeof(float) * new_vector->Vector_t.len);
+    new_vector->Vector_t.Vector = (double *) malloc(sizeof(double) * new_vector->Vector_t.len);
     
     if(new_vector->Vector_t.Vector == NULL)
         error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
@@ -88,7 +88,7 @@ Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
     //printf("\n row: %d", new_matrix->Matrix_t.row);
 
     // Allocating the 2d array in heap (matrix)
-    new_matrix->Matrix_t.Matrix = (float **) malloc(sizeof(float **) * new_matrix->Matrix_t.row);
+    new_matrix->Matrix_t.Matrix = (double **) malloc(sizeof(double **) * new_matrix->Matrix_t.row);
     if(new_matrix->Matrix_t.Matrix == NULL)
         error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
 
@@ -96,7 +96,7 @@ Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
     for(uint16_t i = 0; i < new_matrix->Matrix_t.row; i++)
     {   
         // Allocating N Links (N=col).
-        new_matrix->Matrix_t.Matrix[i] = (float *) malloc(sizeof(float) * new_matrix->Matrix_t.col);
+        new_matrix->Matrix_t.Matrix[i] = (double *) malloc(sizeof(double) * new_matrix->Matrix_t.col);
         if(new_matrix->Matrix_t.Matrix[i] == NULL)
             error_exit(CURRENT_C, "MALLOC_FAILED:NULL");
     }
@@ -142,7 +142,7 @@ void vector_init(Type_t *vector)
     return;
 }//end vector_init.
 
-// Function to init a matrix. (float)
+// Function to init a matrix. (double)
 void matrix_init(Type_t *matrix)
 {
     // Error Handler.
@@ -178,7 +178,7 @@ void matrix_init(Type_t *matrix)
 
 //====================================> [SUB FUNCTIONS]
 
-// Function to print vector. (float)
+// Function to print vector. (double)
 void print_vector(Type_t *vector)
 {
     // Error Handler.
@@ -200,14 +200,14 @@ void print_vector(Type_t *vector)
     // Print the vector.
     for(uint16_t i = 0; i < vector->Vector_t.len; i++)
     {
-        printf("\n%.3f", vector->Vector_t.Vector[i]);
+        printf("\n%.4f", vector->Vector_t.Vector[i]);
     }
     
     printf("\n");
     return;
 }//end print_vector.
 
-// Function to print matrix. (float)
+// Function to print matrix. (double)
 void print_matrix(Type_t *matrix)
 {
     // Error Handler.
@@ -234,7 +234,7 @@ void print_matrix(Type_t *matrix)
     {
         for(uint16_t j = 0; j < matrix->Matrix_t.col ; j++)
         {
-            printf("%.3f ", matrix->Matrix_t.Matrix[i][j]);
+            printf("%.4f ", matrix->Matrix_t.Matrix[i][j]);
         }
         printf("\n");
     }

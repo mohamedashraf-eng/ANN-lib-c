@@ -172,9 +172,65 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
 //====================================> [DNN FUNCTIONS]
 
 // Function to perform the forward propagation on the network.
+/*
+- Forward Propagation Algorithms:
+    1- Input_Layer (dot product) Weights_Layer[0] & Store the result in Hidden[0].
+*/
 void forward_propagation(DNN_Network *dnn_network)
 {
+    /// Check if the passed network isn't created yet.
+    if(dnn_network == NULL)
+        error_exit(CURRENT_C, "DNN_NETWORK: NULL");
+
+    // First the dot product of input & weights_layer[0].
+    // Do the dot product and store it in it.
+    Type_t *input_layer = dnn_network->network_layers->Input_layer->input_layer; // (Temporary variable for readbility).
+    Type_t *weights_layer_0 = dnn_network->network_layers->Layer_weights[0].layer_weights; // (Temporary variable for readbility).
     
+    // Perform the dot product and save it into the hidden layer 0.
+    //free(hidden_layer_0); // Free the previous array.
+    dnn_network->network_layers->Hidden_layer[0].hidden_layer->Vector_t.Vector = VxM_DotProduct(input_layer, weights_layer_0);
+    // Apply the activation function.
+    dnn_network->network_layers->Hidden_layer[0].hidden_layer->Vector_t.Vector = 
+    dnn_network->network_topology->activation_function(dnn_network->network_layers->Hidden_layer[0].hidden_layer);
+
+    // Do the dot product from hidden layer [0] to hidden layer [n].
+    const uint16_t hidden_layers_num = dnn_network->network_topology->hidden_layer_num;
+
+    uint16_t temporary_counter = 0; // Temporary counter for the number of multiplications.
+    uint16_t hidden_layer_counter = 1; // Temporary counter for iterating through the hidden layers.
+    uint16_t layer_weights_counter = 1; // Temporary counter for iterating through the weights.
+
+    while(temporary_counter < (hidden_layers_num-1))
+    {
+        Type_t *hidden_layer_current = dnn_network->network_layers->Hidden_layer[hidden_layer_counter-1].hidden_layer;
+        Type_t *weights_layer_current = dnn_network->network_layers->Layer_weights[layer_weights_counter].layer_weights;
+        
+        // Free the previous allocated array.
+        //free(hidden_layer_next);
+        // Store the dot product result.
+        dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer->Vector_t.Vector = VxM_DotProduct(hidden_layer_current, weights_layer_current);
+        // Apply the activation function.
+        dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer->Vector_t.Vector = 
+        dnn_network->network_topology->activation_function(dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer);
+
+        temporary_counter++; 
+        hidden_layer_counter++; 
+        layer_weights_counter++; 
+    }//end while.
+    
+    // Do the dot product for hidden layer [n] and output layer.
+    Type_t *hidden_layer_n = dnn_network->network_layers->Hidden_layer[hidden_layers_num-1].hidden_layer;
+    const uint16_t layer_weights_num = hidden_layers_num; // ((+ 2 - 1) = (+ 1 - 1) = (0)).
+    Type_t *layer_weights_n = dnn_network->network_layers->Layer_weights[layer_weights_num].layer_weights;
+
+    // Free the previous allocated array.
+    //free(output_layer);
+    // Store the dot product result.
+    dnn_network->network_layers->Output_layer->output_layer->Vector_t.Vector = VxM_DotProduct(hidden_layer_n, layer_weights_n);
+    // Apply the activation function.
+    dnn_network->network_layers->Output_layer->output_layer->Vector_t.Vector = 
+    dnn_network->network_topology->output_activation_function(dnn_network->network_layers->Output_layer->output_layer);
 
     return;
 }//end forward_propagation.
@@ -193,11 +249,22 @@ void back_propagation(DNN_Network *dnn_network)
 // The Linear Activation Function.
 
 
-// The ReLU Activation Function. 
-float *ReLU(Type_t *vector)
-{
+// The Exponentinal Linear Unit Activation Function. 
+double *ELU(Type_t *vector)
+{   
+    const uint16_t vector_len = vector->Vector_t.len;
 
-    return NULL;
+    double alpha = 1.0f;
+    double Exponentinal_Leak = 0.0f;
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        Exponentinal_Leak = alpha * (exp(vector->Vector_t.Vector[i]) - 1);
+        vector->Vector_t.Vector[i] = (vector->Vector_t.Vector[i] < 0) ? 
+                                     (Exponentinal_Leak) : (vector->Vector_t.Vector[i]);
+    }
+
+    return vector->Vector_t.Vector;
 }//end ReLU.
 
 // The Sigmoid Activation Function.
@@ -207,13 +274,32 @@ float *ReLU(Type_t *vector)
 
 
 // The Softmax Activation Function.
+double *SoftMax(Type_t *vector)
+{
+    const uint16_t vector_len = vector->Vector_t.len;
 
+    // Calculate the exponential sum of the given vector.
+    double exponential_sum = 0.0f;
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        exponential_sum += exp(vector->Vector_t.Vector[i]);
+    }
+
+    // Convert the regression vector to classification vector.
+    for(uint16_t j = 0; j < vector_len; j++)
+    {
+        vector->Vector_t.Vector[j] = (vector->Vector_t.Vector[j] / exponential_sum); 
+    }
+
+    return vector->Vector_t.Vector;
+}//end SoftMax.
 
 //====================================> [LOSS FUNCTIONS]
 
 // Function to perform the square error loss function.
 
-float *SquareError(Type_t *vector)
+double *SquareError(Type_t *vector)
 {
 
     return NULL;
@@ -223,7 +309,7 @@ float *SquareError(Type_t *vector)
 
 // Function to do the optimization with gradient decent.
 
-float *GradientDescent(Type_t *vector)
+double *GradientDescent(Type_t *vector)
 {
 
     return NULL;
