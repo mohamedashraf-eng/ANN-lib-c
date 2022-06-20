@@ -3,19 +3,19 @@
     Date: 6/13/2022
     Why : This h file contains the neural network settings.
 */
-//=============================> .START
+//!=============================> .START
 #ifndef _ANN_H
 #define _ANN_H
-//=============================> .INC
+//!=============================> .INC
 #include "Global.h"
-//=============================> .DEFINES
+//!=============================> .DEFINES
 
 #define MAX_INPUT_LAYER_DENSE  ((const uint16_t) 200)
 #define MAX_HIDDEN_LAYER_DENSE ((const uint16_t) 200)
 #define MAX_OUTPUT_LAYER_DENSE ((const uint16_t) 200)
 #define MAX_HIDDEN_LAYER_NUM   ((const uint16_t) 10)
 
-//=============================> .STRUCTS
+//!=============================> .STRUCTS
 // Struct for the input layer.
 typedef struct 
 {
@@ -94,7 +94,8 @@ typedef struct _Network_Topology_t
     double * (*output_activation_function) (Type_t *); // Activation function for the output layer.
 
     // The Loss Function.
-    double * (*loss_function) (Type_t *);
+    double * (*loss_function) (Type_t *, Type_t *);
+    double * (*loss_function_array) (Type_t *);
 
     // The Optimizer Function.
     double * (*optimizer_function) (Type_t *);
@@ -107,25 +108,50 @@ typedef struct _DNN_Network
     Network_Topology_t *network_topology;
     Layer_t            *network_layers;
 }DNN_Network;
-//=============================> .FUNC
+//!=============================> .FUNC
 
+// Main Functions.
 void network_topology_validity(Network_Topology_t *);
 DNN_Network *Create_Network(Network_Topology_t *, Network_Config_t *);
 
+void Set_Input(DNN_Network * ,Type_t *);
+void Set_Output(DNN_Network * ,Type_t *);
+
+//void Get_Error(DNN_Network *);
+//void Get_Accuracy(DNN_Network *);
+
+// DNN Functions.
 void forward_propagation(DNN_Network *);
 void back_propgation(DNN_Network *);
 
-//void Linear(Type_t *);
+// Hidden Layer Activation Functions.
+double *ReLU(Type_t *);
 double *ELU(Type_t *);
-//void Sigmoid(Type_t *);
-//void Tanh(Type_t *);
+double *Sigmoid(Type_t *);
+double *Tanh(Type_t *);
+
+double *ReLU_D(Type_t *);
+double *ELU_D(Type_t *);
+double *Sigmoid_D(Type_t *);
+double *Tanh_D(Type_t *);
+
+// Output Layer Activation Functions.
 double *SoftMax(Type_t *);
 
-double *SquareError(Type_t *);
+// Loss Functions.
+double *MSE(Type_t *, Type_t *);        // Mean Square Error.
+double *MAE(Type_t *, Type_t *);       // Mean Absolute Error.
+//double *BC(Type_t *, Type_t *);      // Binary Classification Error.
+//double *BCE(Type_t *, Type_t *);    // Binary Cross Entropy Error.
+//double *MCC(Type_t *, Type_t *);   // Multi Class Classification Error.
+//double *MCCE(Type_t *, Type_t *); // Multi Class Cross Entropy Error.
 
+// Optimizer Functions.
 double *GradientDescent(Type_t *);
 
+// Sub Functions.
 void print_network(DNN_Network *);
-//=============================> .END
+
+//!=============================> .END
 #endif /*_ANN_H*/
 

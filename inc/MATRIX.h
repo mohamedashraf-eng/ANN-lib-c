@@ -3,19 +3,19 @@
     Date: 6/13/2022
     Why : This h file for the linear algebra math operations.
 */
-//=============================> .START
+//!=============================> .START
 #ifndef _MATRIX_H
 #define _MATRIX_H
-//=============================> .INC
+//!=============================> .INC
 #include "Global.h"
-//=============================> .DEFINES
+//!=============================> .DEFINES
 
 // Define strict ranges to prevent virtual memory overflow. (Memory dying)
 #define MAX_VECTOR_LEN ((const uint8_t) 200)
 #define MAX_MATRIX_ROW ((const uint8_t) 200)
 #define MAX_MATRIX_COL ((const uint8_t) 200)
 
-//=============================> .STRUCTS
+//!=============================> .STRUCTS
 
 // Define abstracted union.
 typedef union _Type_t
@@ -41,7 +41,7 @@ typedef union _Type_t
 
 
 
-//=============================> .FUNC
+//!=============================> .FUNC
 
 // Function to perform the dot product.
 double *VxM_DotProduct(Type_t *, Type_t *);
@@ -49,5 +49,5 @@ double *VxM_DotProduct(Type_t *, Type_t *);
 // void vector_inverse(Type_t *);
 
 void dotProduct_Validity(Type_t *, Type_t *);
-//=============================> .END
+//!=============================> .END
 #endif //_MATRIX_H
