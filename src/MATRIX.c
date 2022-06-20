@@ -3,18 +3,18 @@
     Date: 6/13/2022
     Why : This c file contains the global general use functions.
 */
-//=============================> .START
-//=============================> .INC
+//!=============================> .START
+//!=============================> .INC
 #include "Global.h"
 
 #define CURRENT_H "MATRIX.H"
 #define CURRENT_C "MATRIX.C"
-//=============================> .FUNC
+//!=============================> .FUNC
 
 // Function to perform the dot product.
 //double *Matrix_X_Vector(Type_t *, Type_t *);
 
-//=============================> .IMP
+//!=============================> .IMP
 
 // Function to multiply Vetor[n]xM[n][m].
 /*
@@ -65,7 +65,7 @@ double *VxM_DotProduct(Type_t *vector, Type_t *matrix)
     return vector_result;
 }//end Matrix_X_Vector.
 
-//====================================> [SUB FUNCTIONS]
+//!====================================> [SUB FUNCTIONS]
 // Sub function for error handeling.
 void dotProduct_Validity(Type_t *vector, Type_t *matrix)
 {
@@ -110,3 +110,5 @@ void dotProduct_Validity(Type_t *vector, Type_t *matrix)
         error_exit(CURRENT_C, "VECTOR_LEN_MATRIX_COL:INVALID");
     // assert(matrix->col == vector->len); // For strictly exit.
 }//end dotProduct_Validity.
+
+//!====================================>.END

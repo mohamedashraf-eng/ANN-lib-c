@@ -3,13 +3,13 @@
     Date: 6/13/2022
     Why : This c file for the neural network functions.
 */
-//=============================> .START
-//=============================> .INC
+//!=============================> .START
+//!=============================> .INC
 #include "../inc/Global.h"
 
 #define CURRENT_H "ANN.H"
 #define CURRENT_C "ANN.C"
-//=============================> .FUNC
+//!=============================> .FUNC
 /* 
     - Algorithm overview:
         1- Setting the n.network topology parameters.
@@ -29,17 +29,17 @@
         Transient states in a network: Input -> Hidden[0],  Hidden[N] -> Output
 */
 
-//=============================> .STRUCTS
+//!=============================> .STRUCTS
 
-Network_Config_t general_network_config = {.learning_rate = 0.2549, .dropout = false};
+Network_Config_t general_network_config = {.learning_rate = 0.2549, .dropout = false, .epochs = 5};
 
-//=============================> .DEFINES
+//!=============================> .DEFINES
 
+#define ELU_CONST_ALPHA ((const double) 1.0f)
 
+//!=============================> .FUNC
 
-//=============================> .FUNC
-
-//====================================> [MAIN FUNCTIONS]
+//!====================================> [MAIN FUNCTIONS]
 
 // Function to create a network with specific topology configs.
 DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Network_Config_t *network_config)
@@ -169,7 +169,7 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     return new_dnnNetwork;
 }//end Create_Network.
 
-//====================================> [DNN FUNCTIONS]
+//!====================================> [DNN FUNCTIONS]
 
 // Function to perform the forward propagation on the network.
 /*
@@ -244,17 +244,96 @@ void back_propagation(DNN_Network *dnn_network)
     return;
 }//end back_propagation.
 
-//====================================> [ACTIVATION FUNCTIONS]
+// Function to set the input vector of the network.
+void Set_Input(DNN_Network *myNetwork, Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+    
+    // Check if the input vector_len is !- network vector_len.
+    const uint16_t vector_len = vector->Vector_t.len;
+    const uint16_t network_vector_len = myNetwork->network_topology->input_layer_dense;
 
-// The Linear Activation Function.
+    if(vector_len != network_vector_len)
+        error_exit(CURRENT_C, "VECTOR_LEN != NETWORK_VECTOR_LEN");
+    // assert(vector_len == network_vector_len); // For strictly exit.
 
+    // Set the network vector.
+    myNetwork->network_layers->Input_layer->input_layer = vector;
 
-// The Exponentinal Linear Unit Activation Function. 
-double *ELU(Type_t *vector)
-{   
+    return;
+}//end Set_Input.
+
+// Function to set the input vector of the network.
+void Set_Output(DNN_Network *myNetwork, Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+    
+    // Check if the input vector_len is !- network vector_len.
+    const uint16_t vector_len = vector->Vector_t.len;
+    const uint16_t network_vector_len = myNetwork->network_topology->output_layer_dense;
+
+    if(vector_len != network_vector_len)
+        error_exit(CURRENT_C, "VECTOR_LEN != NETWORK_VECTOR_LEN");
+    // assert(vector_len == network_vector_len); // For strictly exit.
+
+    // Set the network vector.
+    myNetwork->network_layers->Output_layer->output_layer = vector;
+
+    return;
+}//end Set_Output.
+//!====================================> [ACTIVATION FUNCTIONS]
+
+// The Rectified Linear Unit Activation Function.
+double *ReLU(Type_t *vector)
+{
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
     const uint16_t vector_len = vector->Vector_t.len;
 
-    double alpha = 1.0f;
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = (vector->Vector_t.Vector[i] > 0) ? 
+                                     (vector->Vector_t.Vector[i]) : (0);
+    }
+
+    return vector->Vector_t.Vector;
+}
+
+// The ReLU drevative function.
+double *ReLU_D(Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    double alpha = ELU_CONST_ALPHA;
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = (vector->Vector_t.Vector[i] >= 0) ?
+                                     (1) : (0);
+    }
+
+    return vector->Vector_t.Vector;
+}//end ReLU_D.
+
+// The Leaky Exponentinal Linear Unit Activation Function. 
+double *ELU(Type_t *vector)
+{   
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    double alpha = ELU_CONST_ALPHA;
     double Exponentinal_Leak = 0.0f;
 
     for(uint16_t i = 0; i < vector_len; i++)
@@ -265,17 +344,107 @@ double *ELU(Type_t *vector)
     }
 
     return vector->Vector_t.Vector;
-}//end ReLU.
+}//end ELU.
+
+// The ELU drevative function.
+double *ELU_D(Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    double alpha = ELU_CONST_ALPHA;
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = (vector->Vector_t.Vector[i] >= 0) ?
+                                     (1) : (alpha);
+    }
+
+    return vector->Vector_t.Vector;
+}//end ELU_D.
 
 // The Sigmoid Activation Function.
+double *Sigmoid(Type_t *vector)
+{
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
 
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    for(int i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = 1 / (1+exp((-1) * vector->Vector_t.Vector[i]));
+    }
+
+    return vector->Vector_t.Vector;
+}//end Sigmoid.
+
+// The Tanh first drevative function.
+double *Sigmoid_D(Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    // Sigmoid drev: Sigmoid * (1-Sigmoid).
+    double *Sigmoided = Sigmoid(vector);
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = Sigmoided[i] * (1-Sigmoided[i]);
+    }
+
+    return vector->Vector_t.Vector;
+}//end Sigmoid_D.
 
 // The Tanh Activation Function.
+double *Tanh(Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
 
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    for(int i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = tanh(vector->Vector_t.Vector[i]);
+    }
+
+    return vector->Vector_t.Vector;
+}//end Tanh.
+
+// The Tanh first drevative function.
+double *Tanh_D(Type_t *vector)
+{
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
+    double *Tanhed = Tanh(vector);
+
+    const uint16_t vector_len = vector->Vector_t.len;
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        vector->Vector_t.Vector[i] = ( 1 - pow(Tanhed[i], 2) );
+    }
+
+    return vector->Vector_t.Vector;
+}//end Tanh_D.
 
 // The Softmax Activation Function.
 double *SoftMax(Type_t *vector)
 {
+    // Error Handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+
     const uint16_t vector_len = vector->Vector_t.len;
 
     // Calculate the exponential sum of the given vector.
@@ -295,15 +464,50 @@ double *SoftMax(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end SoftMax.
 
-//====================================> [LOSS FUNCTIONS]
-
-// Function to perform the square error loss function.
-
-double *SquareError(Type_t *vector)
+//!====================================> [LOSS FUNCTIONS]
+// Function to perform the mean square error loss function.
+double *MSE(Type_t *actual_vector, Type_t *measured_vector)
 {
+    // Error handeling.
+    if(measured_vector == NULL || actual_vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
 
-    return NULL;
-}//end SqureError.
+    const uint16_t vector_len = measured_vector->Vector_t.len;
+
+    double *error = (double *) malloc(sizeof(double));
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        *error += pow( (actual_vector->Vector_t.Vector[i] - measured_vector->Vector_t.Vector[i]), 2);
+    }
+
+    *error = (*error / vector_len);
+
+    // !Don't Forget to free the allocated location. (In the use)
+    return error;
+}//end MSE.
+
+
+// Function to perform the mean absolute error loss.
+double *MAE(Type_t *actual_vector, Type_t *measured_vector)
+{
+    // Error handeling.
+    if(measured_vector == NULL || actual_vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+    
+    const uint16_t vector_len = measured_vector->Vector_t.len;
+
+    double *error = (double *) malloc(sizeof(double));
+
+    for(uint16_t i = 0; i < vector_len; i++)
+    {
+        *error += abs( (actual_vector->Vector_t.Vector[i] - measured_vector->Vector_t.Vector[i]) );
+    }
+
+    *error = (*error / vector_len);
+
+    return error;
+}//end MAE.
 
 //====================================> [OPTIMIZER FUNCTIONS]
 
@@ -311,12 +515,15 @@ double *SquareError(Type_t *vector)
 
 double *GradientDescent(Type_t *vector)
 {
-
+    // Error handeling.
+    if(vector == NULL)
+        error_exit(CURRENT_C, "VECTOR:NULL");
+    
     return NULL;
 }//end GradientDescent.
 
 
-//====================================> [SUB FUNCTIONS]
+//!====================================> [SUB FUNCTIONS]
 
 // Function to check the validity & restrections of a given network topology.
 void network_topology_validity(Network_Topology_t *network_topology)
@@ -382,33 +589,84 @@ void print_network(DNN_Network *myNetwork)
     if(myNetwork == NULL)
         error_exit(CURRENT_C, "MY_NETWORK:NULL");
 
-    // Printing the input layer.
-    printf("\n Input_Layer: \n");
-    print_vector(myNetwork->network_layers->Input_layer->input_layer);
+    const uint8_t BORDER_NUM = 50;
+    for(uint8_t i = 0; i < BORDER_NUM; i++)
+        printf("=");
 
-    // Printing hidden layers.
-    const uint16_t hNum = myNetwork->network_topology->hidden_layer_num;
+    // Printing the network parameters.
+    printf("\n[>] Input Layer Dense: %d", myNetwork->network_topology->input_layer_dense);
+    printf("\n[>] Hidden Layer Dense: %d", myNetwork->network_topology->hidden_layer_dense);
+    printf("\n[>] Hidden Layer Num Layer Dense: %d", myNetwork->network_topology->hidden_layer_num);
+    printf("\n[>] Output Layer Dense: %d", myNetwork->network_topology->output_layer_dense);
+    printf("\n[>] Learning Rate: %lf", myNetwork->network_config->learning_rate);
+    printf("\n[>] Drop out: %d", myNetwork->network_config->dropout);
+    printf("\n[>] Number Of Epochs: %d", myNetwork->network_config->epochs);
+    printf("\n");
+    for(uint8_t i = 0; i < BORDER_NUM; i++)
+        printf("=");
+    printf("\n");
+    // Printing the layers.
+    const uint16_t num_of_layers = myNetwork->network_topology->hidden_layer_num + 2;
+    const uint16_t num_of_hiddens = myNetwork->network_topology->hidden_layer_num;
 
-    for(uint16_t i = 0; i < hNum; i++)
+    printf("[>] Input Layer: ");
+    for(uint16_t i = 0; i < myNetwork->network_topology->input_layer_dense; i++)
+        printf("\n\t[%d]: %.4f", i, myNetwork->network_layers->Input_layer->input_layer->Vector_t.Vector[i]);
+    
+    printf("\n");
+
+    printf("[>] Hidden Layers: \n");
+    for(uint16_t i = 0; i < num_of_hiddens; i++)
     {
-        printf("\n Hidden_Layer[%d]: \n", i);
-        print_vector(myNetwork->network_layers->Hidden_layer[i].hidden_layer);
-    }  
-
-    // Printing the output layer.
-    printf("\n Output_Layer: \n");
-    print_vector(myNetwork->network_layers->Output_layer->output_layer);
-
-    // Printing all the weights.
-    const uint16_t NoW = myNetwork->network_topology->hidden_layer_num + 1;
-   
-    for(uint16_t i = 0; i < NoW; i++)
-    {    
-        printf("\n Layer_Weights[%d]: \n", i);
-        print_matrix(myNetwork->network_layers->Layer_weights[i].layer_weights);
+        printf("\t[%d] Hidden Layer: ", i);
+        for(uint16_t j = 0; j < myNetwork->network_topology->hidden_layer_num; j++)
+            printf("\n\t\t[%d]: %.4f", j, myNetwork->network_layers->Hidden_layer[i].hidden_layer->Vector_t.Vector[j]);
+        printf("\n");
     }
+
+    printf("[>] Output Layer: ");
+    for(uint16_t i = 0; i < myNetwork->network_topology->output_layer_dense; i++)
+        printf("\n\t[%d]: %.4f", i, myNetwork->network_layers->Output_layer->output_layer->Vector_t.Vector[i]);
+    
+    printf("\n");
+    printf("[>] Weights: ");
+    printf("\n\t[0] Layer Weights: \n");
+    for(uint16_t i = 0; i < myNetwork->network_topology->hidden_layer_dense; i++)
+    {
+        for(uint16_t j = 0; j < myNetwork->network_topology->input_layer_dense; j++)
+            printf("\t%.4f", myNetwork->network_layers->Layer_weights[0].layer_weights->Matrix_t.Matrix[i][j]);
+        printf("\n");
+    }
+
+    const uint16_t num_of_weights = myNetwork->network_topology->hidden_layer_num + 1;
+    for(uint16_t i = 1; i < num_of_weights-1; i++)
+    {
+        printf("\n\t[%d] Layer Weights: \n", i);
+            for(uint16_t j = 0; j < myNetwork->network_topology->hidden_layer_dense; j++)
+            {   
+                for(uint16_t k = 0; k < myNetwork->network_topology->hidden_layer_dense; k++)
+                    printf("\t%.4f", myNetwork->network_layers->Layer_weights[i].layer_weights->Matrix_t.Matrix[j][k]);
+                printf("\n");
+            }
+    }
+
+    printf("\n\t[%d] Layer Weights: \n", num_of_weights-1);
+    for(uint16_t i = 0; i < myNetwork->network_topology->output_layer_dense; i++)
+    {
+        for(uint16_t j = 0; j < myNetwork->network_topology->hidden_layer_dense; j++)
+            printf("\t%.4f", myNetwork->network_layers->Layer_weights[num_of_weights-1].layer_weights->Matrix_t.Matrix[i][j]);
+        printf("\n");
+    }
+
+    printf("[>] Biases: ");
+    for(uint16_t i = 0; i < num_of_layers-1; i++)
+        printf("\n\t[%d]: %.4f", i, myNetwork->network_layers->Layers_biases->layers_biases->Vector_t.Vector[i]);
+    
+    printf("\n");
+    for(uint8_t i = 0; i < BORDER_NUM; i++)
+        printf("=");
 
     return;
 }//end print_network.
 
-//=============================> .END
+//!=============================> .END
