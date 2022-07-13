@@ -45,6 +45,11 @@
 */
 
 // Private struct for private variables.
+
+/**
+ * @brief Struct for the private variables
+ * 
+ */
 typedef struct _Private_t
 {
     // Used for the init range & double factor & randomizing.

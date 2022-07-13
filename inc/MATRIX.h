@@ -42,6 +42,11 @@
 */
 
 // Define abstracted union.
+
+/**
+ * @brief Union for the ADT declrations
+ * 
+ */
 typedef union _Type_t
 {
     // Struct to save the vector elements.
@@ -62,8 +67,6 @@ typedef union _Type_t
     }Matrix_t;
     
 }Type_t; // End Union. (Type_t)
-
-
 
 /*
 ----------------------------------------------------------------
