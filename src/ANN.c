@@ -1,15 +1,18 @@
-/*
-    Author: Mohamed Wx
-    Date: 6/13/2022
-    Why : This c file for the neural network functions.
-*/
-//!=============================> .START
-//!=============================> .INC
+/**
+ * @file ANN.c
+ * @author Mohamed Wx (gtlyco205@gmail.com)
+ * @brief Artifcial Neural Network Source Code.
+ * @version 0.3
+ * @date 2022-06-13
+ * 
+ * @copyright Copyright Mohamed Wx (c) 2022
+ * 
+ */
 #include "../inc/Global.h"
 
 #define CURRENT_H "ANN.H"
 #define CURRENT_C "ANN.C"
-//!=============================> .FUNC
+//!=============================> .START
 /* 
     - Algorithm overview:
         1- Setting the n.network topology parameters.
@@ -29,19 +32,35 @@
         Transient states in a network: Input -> Hidden[0],  Hidden[N] -> Output
 */
 
-//!=============================> .STRUCTS
+/*
+----------------------------------------------------------------
+!-                       DEFINED STRUCTS                       -
+----------------------------------------------------------------
+*/
 
 Network_Config_t general_network_config = {.learning_rate = 0.2549, .dropout = false, .epochs = 5};
 
-//!=============================> .DEFINES
+/*
+----------------------------------------------------------------
+!-                       DEFINED VARIABLES                     -
+----------------------------------------------------------------
+*/
 
 #define ELU_CONST_ALPHA ((const double) 1.0f)
 
-//!=============================> .FUNC
+/*
+----------------------------------------------------------------
+!-                       MAIN FUNCTIONS                        -
+----------------------------------------------------------------
+*/
 
-//!====================================> [MAIN FUNCTIONS]
-
-// Function to create a network with specific topology configs.
+/**
+ * @brief Function to create a network with specific topology configs.
+ * 
+ * @param network_topology_settings 
+ * @param network_config 
+ * @return DNN_Network* 
+ */
 DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Network_Config_t *network_config)
 {
     // Check the validity of a given network topology.
@@ -169,13 +188,18 @@ DNN_Network *Create_Network(Network_Topology_t *network_topology_settings, Netwo
     return new_dnnNetwork;
 }//end Create_Network.
 
-//!====================================> [DNN FUNCTIONS]
-
-// Function to perform the forward propagation on the network.
 /*
-- Forward Propagation Algorithms:
-    1- Input_Layer (dot product) Weights_Layer[0] & Store the result in Hidden[0].
+----------------------------------------------------------------
+!-                       DNN FUNCTIONS                         -
+----------------------------------------------------------------
 */
+
+/**
+ * @brief Function to perform the forward propagation on the network.
+ *  - Forward Propagation Algorithms:
+        - Input_Layer (dot product) Weights_Layer[0] & Store the result in Hidden[0].
+ * @param dnn_network 
+ */
 void forward_propagation(DNN_Network *dnn_network)
 {
     /// Check if the passed network isn't created yet.
@@ -190,6 +214,11 @@ void forward_propagation(DNN_Network *dnn_network)
     // Perform the dot product and save it into the hidden layer 0.
     //free(hidden_layer_0); // Free the previous array.
     dnn_network->network_layers->Hidden_layer[0].hidden_layer->Vector_t.Vector = VxM_DotProduct(input_layer, weights_layer_0);
+    // Apply biases to the vector.
+    ApplyBiases(dnn_network->network_layers->Layers_biases->layers_biases, 
+                dnn_network->network_layers->Hidden_layer[0].hidden_layer, 
+                (uint16_t) 0);
+                
     // Apply the activation function.
     dnn_network->network_layers->Hidden_layer[0].hidden_layer->Vector_t.Vector = 
     dnn_network->network_topology->activation_function(dnn_network->network_layers->Hidden_layer[0].hidden_layer);
@@ -210,6 +239,11 @@ void forward_propagation(DNN_Network *dnn_network)
         //free(hidden_layer_next);
         // Store the dot product result.
         dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer->Vector_t.Vector = VxM_DotProduct(hidden_layer_current, weights_layer_current);
+        // Apply biases to the vector.
+        ApplyBiases(dnn_network->network_layers->Layers_biases->layers_biases, 
+                    dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer, 
+                    (uint16_t) hidden_layer_counter);
+        
         // Apply the activation function.
         dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer->Vector_t.Vector = 
         dnn_network->network_topology->activation_function(dnn_network->network_layers->Hidden_layer[hidden_layer_counter].hidden_layer);
@@ -228,6 +262,7 @@ void forward_propagation(DNN_Network *dnn_network)
     //free(output_layer);
     // Store the dot product result.
     dnn_network->network_layers->Output_layer->output_layer->Vector_t.Vector = VxM_DotProduct(hidden_layer_n, layer_weights_n);
+
     // Apply the activation function.
     dnn_network->network_layers->Output_layer->output_layer->Vector_t.Vector = 
     dnn_network->network_topology->output_activation_function(dnn_network->network_layers->Output_layer->output_layer);
@@ -235,16 +270,34 @@ void forward_propagation(DNN_Network *dnn_network)
     return;
 }//end forward_propagation.
 
-
-// Function to perform the backward propagation on the network.
-void back_propagation(DNN_Network *dnn_network)
+/**
+ * @brief Function to perform the backward propagation on the network.
+ *  ! Back Propagation Algorithm: (General: X[n+1] = X[n] + LR * dE/dX[n]) (X => Weight)
+        Which means that (The new updated weight = the previous weight + 
+            Learning_Rate * The error rate of change to the previous weight)
+ * @param dnn_network 
+ * @param desired_output 
+ */
+void back_propagation(DNN_Network *dnn_network, Type_t *desired_output)
 {
+    /// Check if the passed network isn't created yet.
+    if(dnn_network == NULL)
+        error_exit(CURRENT_C, "DNN_NETWORK: NULL");
 
+    // Calculate the loss function for the network current output.
+    Type_t *actual_output = dnn_network->network_layers->Output_layer->output_layer;
+    double *loss_function_vector = dnn_network->network_topology->loss_function(desired_output, actual_output);
 
-    return;
+    
+    return;                     
 }//end back_propagation.
 
-// Function to set the input vector of the network.
+/**
+ * @brief Function to set the input vector of the network.
+ * 
+ * @param myNetwork 
+ * @param vector 
+ */
 void Set_Input(DNN_Network *myNetwork, Type_t *vector)
 {
     // Error Handeling.
@@ -260,12 +313,20 @@ void Set_Input(DNN_Network *myNetwork, Type_t *vector)
     // assert(vector_len == network_vector_len); // For strictly exit.
 
     // Set the network vector.
+    Type_t *input_layer_temp = myNetwork->network_layers->Input_layer->input_layer;
     myNetwork->network_layers->Input_layer->input_layer = vector;
+
+    free_vector(input_layer_temp);
 
     return;
 }//end Set_Input.
 
-// Function to set the input vector of the network.
+/**
+ * @brief Function to set the input vector of the network.
+ * 
+ * @param myNetwork 
+ * @param vector 
+ */
 void Set_Output(DNN_Network *myNetwork, Type_t *vector)
 {
     // Error Handeling.
@@ -281,13 +342,26 @@ void Set_Output(DNN_Network *myNetwork, Type_t *vector)
     // assert(vector_len == network_vector_len); // For strictly exit.
 
     // Set the network vector.
+    Type_t *output_layer_temp = myNetwork->network_layers->Output_layer->output_layer;
     myNetwork->network_layers->Output_layer->output_layer = vector;
+
+    free_vector(output_layer_temp);
 
     return;
 }//end Set_Output.
-//!====================================> [ACTIVATION FUNCTIONS]
 
-// The Rectified Linear Unit Activation Function.
+/*
+----------------------------------------------------------------
+!-                      ACTIVATION FUNCTIONS                   -
+----------------------------------------------------------------
+*/
+
+/**
+ * @brief The Rectified Linear Unit Activation Function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *ReLU(Type_t *vector)
 {
     if(vector == NULL)
@@ -304,7 +378,12 @@ double *ReLU(Type_t *vector)
     return vector->Vector_t.Vector;
 }
 
-// The ReLU drevative function.
+/**
+ * @brief The ReLU drevative function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *ReLU_D(Type_t *vector)
 {
     // Error Handeling.
@@ -324,7 +403,12 @@ double *ReLU_D(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end ReLU_D.
 
-// The Leaky Exponentinal Linear Unit Activation Function. 
+/**
+ * @brief The Leaky Exponentinal Linear Unit Activation Function. 
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *ELU(Type_t *vector)
 {   
     // Error Handeling.
@@ -346,7 +430,12 @@ double *ELU(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end ELU.
 
-// The ELU drevative function.
+/**
+ * @brief The ELU drevative function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *ELU_D(Type_t *vector)
 {
     // Error Handeling.
@@ -366,7 +455,12 @@ double *ELU_D(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end ELU_D.
 
-// The Sigmoid Activation Function.
+/**
+ * @brief The Sigmoid Activation Function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *Sigmoid(Type_t *vector)
 {
     if(vector == NULL)
@@ -382,7 +476,12 @@ double *Sigmoid(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end Sigmoid.
 
-// The Tanh first drevative function.
+/**
+ * @brief The Tanh first drevative function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *Sigmoid_D(Type_t *vector)
 {
     // Error Handeling.
@@ -402,7 +501,12 @@ double *Sigmoid_D(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end Sigmoid_D.
 
-// The Tanh Activation Function.
+/**
+ * @brief The Tanh Activation Function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *Tanh(Type_t *vector)
 {
     // Error Handeling.
@@ -419,7 +523,12 @@ double *Tanh(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end Tanh.
 
-// The Tanh first drevative function.
+/**
+ * @brief The Tanh first drevative function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *Tanh_D(Type_t *vector)
 {
     // Error Handeling.
@@ -438,7 +547,12 @@ double *Tanh_D(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end Tanh_D.
 
-// The Softmax Activation Function.
+/**
+ * @brief The Softmax Activation Function.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *SoftMax(Type_t *vector)
 {
     // Error Handeling.
@@ -464,21 +578,32 @@ double *SoftMax(Type_t *vector)
     return vector->Vector_t.Vector;
 }//end SoftMax.
 
-//!====================================> [LOSS FUNCTIONS]
-// Function to perform the mean square error loss function.
-double *MSE(Type_t *actual_vector, Type_t *measured_vector)
+/*
+----------------------------------------------------------------
+!-                       LOSS FUNCTIONS                        -
+----------------------------------------------------------------
+*/
+
+/**
+ * @brief Function to perform the mean square error loss function.
+ * 
+ * @param desired_vector 
+ * @param obtained_vector 
+ * @return double* 
+ */
+double *MSE(Type_t *desired_vector, Type_t *obtained_vector)
 {
     // Error handeling.
-    if(measured_vector == NULL || actual_vector == NULL)
+    if(obtained_vector == NULL || desired_vector == NULL)
         error_exit(CURRENT_C, "VECTOR:NULL");
 
-    const uint16_t vector_len = measured_vector->Vector_t.len;
+    const uint16_t vector_len = obtained_vector->Vector_t.len;
 
     double *error = (double *) malloc(sizeof(double));
 
     for(uint16_t i = 0; i < vector_len; i++)
     {
-        *error += pow( (actual_vector->Vector_t.Vector[i] - measured_vector->Vector_t.Vector[i]), 2);
+        *error += pow( (desired_vector->Vector_t.Vector[i] - obtained_vector->Vector_t.Vector[i]), 2);
     }
 
     *error = (*error / vector_len);
@@ -487,21 +612,26 @@ double *MSE(Type_t *actual_vector, Type_t *measured_vector)
     return error;
 }//end MSE.
 
-
-// Function to perform the mean absolute error loss.
-double *MAE(Type_t *actual_vector, Type_t *measured_vector)
+/**
+ * @brief Function to perform the mean absolute error loss.
+ * 
+ * @param desired_vector 
+ * @param obtained_vector 
+ * @return double* 
+ */
+double *MAE(Type_t *desired_vector, Type_t *obtained_vector)
 {
     // Error handeling.
-    if(measured_vector == NULL || actual_vector == NULL)
+    if(obtained_vector == NULL || desired_vector == NULL)
         error_exit(CURRENT_C, "VECTOR:NULL");
     
-    const uint16_t vector_len = measured_vector->Vector_t.len;
+    const uint16_t vector_len = obtained_vector->Vector_t.len;
 
     double *error = (double *) malloc(sizeof(double));
 
     for(uint16_t i = 0; i < vector_len; i++)
     {
-        *error += abs( (actual_vector->Vector_t.Vector[i] - measured_vector->Vector_t.Vector[i]) );
+        *error += abs( (desired_vector->Vector_t.Vector[i] - obtained_vector->Vector_t.Vector[i]) );
     }
 
     *error = (*error / vector_len);
@@ -509,10 +639,18 @@ double *MAE(Type_t *actual_vector, Type_t *measured_vector)
     return error;
 }//end MAE.
 
-//====================================> [OPTIMIZER FUNCTIONS]
+/*
+----------------------------------------------------------------
+!-                       OPTIMIZER FUNCTIONS                   -
+----------------------------------------------------------------
+*/
 
-// Function to do the optimization with gradient decent.
-
+/**
+ * @brief Function to do the optimization with gradient decent.
+ * 
+ * @param vector 
+ * @return double* 
+ */
 double *GradientDescent(Type_t *vector)
 {
     // Error handeling.
@@ -523,9 +661,39 @@ double *GradientDescent(Type_t *vector)
 }//end GradientDescent.
 
 
-//!====================================> [SUB FUNCTIONS]
+/*
+----------------------------------------------------------------
+!-                       SUB FUNCTIONS                         -
+----------------------------------------------------------------
+*/
 
-// Function to check the validity & restrections of a given network topology.
+/**
+ * @brief Function to apply (add) the biases to the vector.
+ * 
+ * @param biases 
+ * @param vector 
+ * @param current_idx 
+ */
+void ApplyBiases(Type_t *biases, Type_t *vector, uint8_t current_idx)
+{
+    // Error handler.
+    if(vector == NULL || biases == NULL)
+        error_exit("CURRENT_C", "VECTOR:NULL || BIASES:NULL");
+    
+    for(uint16_t i = 0; i < vector->Vector_t.len; i++)  
+    {  
+        vector->Vector_t.Vector[i] = vector->Vector_t.Vector[i] + 
+                                     biases->Vector_t.Vector[current_idx];
+    }
+
+    return;
+}//end ApplyBiases.
+
+/**
+ * @brief Function to check the validity & restrections of a given network topology.
+ * 
+ * @param network_topology 
+ */
 void network_topology_validity(Network_Topology_t *network_topology)
 {
     //Check if the passed newtork_topology is valid.
@@ -583,7 +751,11 @@ void network_topology_validity(Network_Topology_t *network_topology)
 }//end network_topology_validity.
 
 
-// Function to print network (for debugging purposes)
+/**
+ * @brief Function to print a network
+ * 
+ * @param myNetwork 
+ */
 void print_network(DNN_Network *myNetwork)
 {
     if(myNetwork == NULL)

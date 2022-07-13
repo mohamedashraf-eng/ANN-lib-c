@@ -1,31 +1,38 @@
-/*
-    Author: Mohamed Wx
-    Date: 6/13/2022
-    Why : This c file contains the global general use functions.
-*/
+/**
+ * @file MATRIX.c
+ * @author Mohamed Wx (gtlyco205@gmail.com)
+ * @brief Matrix math functions
+ * @version 0.3
+ * @date 2022-06-13
+ * 
+ * @copyright Copyright Mohamed Wx (c) 2022
+ * 
+ */
 //!=============================> .START
-//!=============================> .INC
 #include "Global.h"
 
 #define CURRENT_H "MATRIX.H"
 #define CURRENT_C "MATRIX.C"
-//!=============================> .FUNC
 
-// Function to perform the dot product.
-//double *Matrix_X_Vector(Type_t *, Type_t *);
-
-//!=============================> .IMP
-
-// Function to multiply Vetor[n]xM[n][m].
 /*
-- Quick Math Recap:
-[1, 2, 3][2] => [(1*2) + (2*4) + (3*8)] = [X] 
-[2, 3, 4][4] => [(2*2) + (3*4) + (4*8)] = [Y]
-[3, 5, 6][8] => [(3*2) + (5*4) + (6*8)] = [Z]
-
-- Data Block:
-    (Hidden_Layer[LAYER]->Vector * Weights[LAYER]->Matrix) = HIDDEN_LAYER[LAYER->NEXT]->Vector.
+----------------------------------------------------------------
+!-                       MAIN FUNCTIONS                        -
+----------------------------------------------------------------
 */
+
+/**
+ * @brief Function to multiply 1D array by 2D array
+ * - Quick Math Recap:
+        [1, 2, 3][2] => [(1*2) + (2*4) + (3*8)] = [X] 
+        [2, 3, 4][4] => [(2*2) + (3*4) + (4*8)] = [Y]
+        [3, 5, 6][8] => [(3*2) + (5*4) + (6*8)] = [Z]
+        - Data Block:
+            (Hidden_Layer[LAYER]->Vector * Weights[LAYER]->Matrix) = HIDDEN_LAYER[LAYER->NEXT]->Vector.
+
+ * @param vector 
+ * @param matrix 
+ * @return double* 
+ */
 double *VxM_DotProduct(Type_t *vector, Type_t *matrix)
 {
     // Error handeling function.
@@ -65,8 +72,18 @@ double *VxM_DotProduct(Type_t *vector, Type_t *matrix)
     return vector_result;
 }//end Matrix_X_Vector.
 
-//!====================================> [SUB FUNCTIONS]
-// Sub function for error handeling.
+/*
+----------------------------------------------------------------
+!-                       SUB FUNCTIONS                         -
+----------------------------------------------------------------
+*/
+
+/**
+ * @brief Function for error handeling
+ * 
+ * @param vector 
+ * @param matrix 
+ */
 void dotProduct_Validity(Type_t *vector, Type_t *matrix)
 {
     // - Error Handeling:

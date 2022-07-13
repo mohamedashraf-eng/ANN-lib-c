@@ -1,21 +1,40 @@
-/*
-    Author: Mohamed Wx
-    Date: 6/13/2022
-    Why : This c file contains the global general use functions.
-*/
+/**
+ * @file Global.c
+ * @author Mohamed Wx (gtlyco205@gmail.com)
+ * @brief Global usage functions
+ * @version 0.3
+ * @date 2022-06-13
+ * 
+ * @copyright Copyright Mohamed Wx (c) 2022
+ * 
+ */
 //!=============================> .START
-//!=============================> .INC
 #include "Global.h"
 
 #define CURRENT_C "Global.c"
 #define CURRENT_H "Global.h"
-//!=============================> .STRUCT
+
+/*
+----------------------------------------------------------------
+!-                       DEFINED STRUCTS                       -
+----------------------------------------------------------------
+*/
 
 Privates_t private = {.range = 10.0f, .factor = 0.1332f, .randoming = true};
 
-//!=============================> .FUNC
+/*
+----------------------------------------------------------------
+!-                       MAIN FUNCTIONS                        -
+----------------------------------------------------------------
+*/
 
-// Function to make a vector in heap.
+/**
+ * @brief Function to make a 1D array in heap
+ * 
+ * @param vector_len 
+ * @param init 
+ * @return Type_t* 
+ */
 Type_t *create_vector(const uint16_t vector_len, bool init)
 {
     // Check if the input length isn't valid.
@@ -49,19 +68,22 @@ Type_t *create_vector(const uint16_t vector_len, bool init)
     return new_vector; 
 }//end create_vector.
 
-//!====================================> [MAIN FUNCTIONS]
 
-// Function to create matrix in heap.
-/*
-- Heap visual view:
-    nROWS
-    [0]=>[0]->[1]->..[m] mCOLS
-    [1]=>[0]->[1]->..[m] mCOLS
-    [2]=>[0]->[1]->..[m] mCOLS
-    .
-    .
-    [n]=>[0]->[1]->..[m] mCOLS
-*/
+/**
+ * @brief Function to create 2D array in heap.
+ *          - Heap visual view:
+                nROWS
+                [0]=>[0]->[1]->..[m] mCOLS
+                [1]=>[0]->[1]->..[m] mCOLS
+                [2]=>[0]->[1]->..[m] mCOLS
+                .
+                .
+                [n]=>[0]->[1]->..[m] mCOLS
+ * @param row 
+ * @param col 
+ * @param init 
+ * @return Type_t* 
+ */
 Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
 {
     // Error Handler.
@@ -111,7 +133,11 @@ Type_t *create_matrix(const uint16_t row, const uint16_t col, bool init)
 }//end create_matrix.
 
 
-// Function to initalzie an array.
+/**
+ * @brief Function to initalzie an 1D array.
+ * 
+ * @param vector 
+ */
 void vector_init(Type_t *vector)
 {
     // Error Handler.
@@ -142,7 +168,11 @@ void vector_init(Type_t *vector)
     return;
 }//end vector_init.
 
-// Function to init a matrix. (double)
+/**
+ * @brief Function to init a 2D array.
+ * 
+ * @param matrix 
+ */
 void matrix_init(Type_t *matrix)
 {
     // Error Handler.
@@ -176,9 +206,17 @@ void matrix_init(Type_t *matrix)
     return;
 }//end matrix_init.
 
-//!====================================> [SUB FUNCTIONS]
+/*
+----------------------------------------------------------------
+!-                       SUB FUNCTIONS                         -
+----------------------------------------------------------------
+*/
 
-// Function to print vector. (double)
+/**
+ * @brief Function print 1D array
+ * 
+ * @param vector 
+ */
 void print_vector(Type_t *vector)
 {
     // Error Handler.
@@ -207,7 +245,11 @@ void print_vector(Type_t *vector)
     return;
 }//end print_vector.
 
-// Function to print matrix. (double)
+/**
+ * @brief Function print 2D array
+ * 
+ * @param matrix 
+ */
 void print_matrix(Type_t *matrix)
 {
     // Error Handler.
@@ -243,7 +285,11 @@ void print_matrix(Type_t *matrix)
     return;
 }//end print_matrix.
 
-// Function to free heap vector.
+/**
+ * @brief Function free 1D array
+ * 
+ * @param vector 
+ */
 void free_vector(Type_t *vector)
 {
     // Error Handeling.
@@ -273,7 +319,11 @@ void free_vector(Type_t *vector)
     return;
 }//end free_vector.
 
-// Function to free heap matrix.
+/**
+ * @brief Function to free 2D array
+ * 
+ * @param matrix 
+ */
 void free_matrix(Type_t *matrix)
 {
     // Error Handeling.
@@ -309,7 +359,5 @@ void free_matrix(Type_t *matrix)
 
     return;
 }//end free_matrix.
-
-
 
 //!=============================> .END
