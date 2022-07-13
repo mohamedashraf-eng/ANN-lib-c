@@ -1,12 +1,27 @@
-/*
-    Author: Mohamed Wx
-    Date: 6/13/2022
-    Why : This h file for the global general use functions.
-*/
+/**
+ * @file Global.h
+ * @author Mohamed Wx (gtlyco205@gmail.com)
+ * @brief Global functions header file.
+ * @version 0.1
+ * @date 2022-06-13
+ * 
+ * @copyright Copyright Mohamed Wx (c) 2022
+ * 
+ */
 //!=============================> .START
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
-//!=============================> .INC
+
+#ifdef _cplusplus
+    extern "C"{
+#endif
+
+/*
+----------------------------------------------------------------
+!-                       INCLUDED HEADERS                      -
+----------------------------------------------------------------
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -22,7 +37,12 @@
 //====> Made Headers.
 #include "MATRIX.h"
 #include "ANN.h"
-//!=============================> .STRUCTS
+
+/*
+----------------------------------------------------------------
+!-                       DEFINED STRUCTS                       -
+----------------------------------------------------------------
+*/
 
 // Private struct for private variables.
 typedef struct _Private_t
@@ -35,16 +55,44 @@ typedef struct _Private_t
     // const uint16_t x, y, z; // For general purpose using.
 }Privates_t;
 
-//!=============================> .DEFINES
-// Standard error macro function for error handeling.
-#define error_exit(CURRENT_FILE, ERROR_TYPE) ({fprintf(stderr, "ERROR ("__FILE__": %s -- LINE: %d)\n", ERROR_TYPE, __LINE__); \
-                                               exit(-1);}) 
-//!=============================> .FUNC
+/*
+----------------------------------------------------------------
+!-                       DEFINED VARIABLES                     -
+----------------------------------------------------------------
+*/
 
+/**
+ * @brief Standard error macro function for error handeling.
+ * 
+ */
+#define error_exit(CURRENT_FILE, ERROR_TYPE) \
+({fprintf(stderr, "ERROR (File: %s -- Function: %s -- Line: %d -- Type: %s)", \
+                          __FILE__,__func__,__LINE__,ERROR_TYPE); \
+                          exit(-1);}) 
+
+/**
+ * @brief Standard macro function for unimplemented functions
+ * 
+ */
+#define UNIMPLEMENTED \
+    do { \
+        fprintf(stderr, "%s:%d: %s is not implemented yet\n", \
+                __FILE__, __LINE__, __func__); \
+        abort(); \
+    } while(0)               
+                                    
+/*
+----------------------------------------------------------------
+!-                       DEFINED FUNCTIONS                     -
+----------------------------------------------------------------
+*/
+
+/** @defgroup Global Usage Main Functions */
 void vector_init(Type_t *);
 void matrix_init(Type_t *);
 void print_vector(Type_t *);
 void print_matrix(Type_t *);
+
 Type_t *create_vector(const uint16_t, bool );
 Type_t *create_matrix(const uint16_t , const uint16_t, bool );
 
@@ -55,5 +103,8 @@ void free_matrix(Type_t *);
 
 //void mallocValidity(void *);
 
+#ifdef __cplusplus
+    }
+#endif
 //!=============================> .END
 #endif //_GLOBAL_H
