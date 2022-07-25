@@ -18,7 +18,6 @@ ____
 ## Loss Functions
 * MSE
 * MAE
-*
 ____
 
 # How to use
