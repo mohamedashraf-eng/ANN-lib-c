@@ -5,20 +5,20 @@ ____
 
 # Complete Functions
 ## Public Functions
--[x] Create_Network
--[x] forward_propagation
+* Create_Network
+* forward_propagation
 
 ## Activation Functions
--[x] ReLU
--[x] ELU
--[x] Sigmoid
--[x] Tanh
--[x] Softmax
+* ReLU
+* ELU
+* Sigmoid
+* Tanh
+* Softmax
 
 ## Loss Functions
--[x] MSE
--[x] MAE
--[ ] 
+* MSE
+* MAE
+*
 ____
 
 # How to use
