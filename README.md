@@ -23,7 +23,7 @@ ____
 
 # How to use
 ## Setting your network parameters
-### Topology
+### Network Topology
 ```C
 Network_Topology_t MyNetworkTopology = {.input_layer_dense  = 2, 
                                         .hidden_layer_dense = 5,
