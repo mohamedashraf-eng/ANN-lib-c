@@ -1,4 +1,6 @@
-# Open_Source_ANN_In_C
+# Open source artificial neural network library built in c
+This is open source library for creating artificial neural network in c programming language for general purpose use.  
+
 ## About Library
 This library is essentialy made for Embedded Machine Learning. It's based on memory management (Not fully secured yet).
 ____
@@ -59,6 +61,3 @@ ____
 * [Backward Propagation](https://www.youtube.com/watch?v=nz3NYD73H6E).
 * [Algorithms](https://rimstar.org/science_electronics_projects/backpropagation_neural_network_software_3_layer.htm).
 * [Visual](https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.46243&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false).
-=======
-# Open source artificial neural network library built in c
-This is open source library for creating artificial neural network in c programming language for general purpose use.
